@@ -6,7 +6,7 @@ import QS from 'qs';
 
 
 axios.defaults.baseURL = "http://localhost:88/api/"
-axios.defaults.headers = {'Content-Type': 'application/json',"Authorization": localStorage.getItem("token")}
+axios.defaults.headers = {'Content-Type': 'application/json; charset=utf-8',"token": localStorage.getItem("token")}
 
 // axios.interceptors.response.use(response => {
 //     let res = response.data;
@@ -51,6 +51,10 @@ export function get(url, params) {
       params: params
     })
       .then(res => {
+        if (res.data && res.data.code === 401) { // 401, token失效
+          store.commit("REMOVE_INFO")
+          router.push('/logandres/login')
+        }
         resolve(res.data);
       }).catch((error) => {
       console.log(error)
@@ -62,10 +66,7 @@ export function get(url, params) {
         })
         router.push('/')
       }
-      if (error.response.status === 401) {
-        store.commit("REMOVE_INFO")
-        router.push("/logandres/login")
-      }
+
     })
 
   });
@@ -80,6 +81,10 @@ export function post(url, params) {
   return new Promise((resolve, reject) => {
     axios.post(url, JSON.stringify(params))
       .then(res => {
+        if (res.data && res.data.code === 401) { // 401, token失效
+          store.commit("REMOVE_INFO")
+          router.push('/logandres/login')
+        }
         resolve(res.data);
       }).catch((error) => {
       console.log(error)
@@ -91,10 +96,7 @@ export function post(url, params) {
         })
         router.push('/')
       }
-      if (error.response.status === 401) {
-        store.commit("REMOVE_INFO")
-        router.push("/logandres/login")
-      }
+
     })
 
   });
